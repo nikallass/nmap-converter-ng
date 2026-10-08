@@ -531,8 +531,6 @@ def choose_format(output, requested):
     ext = os.path.splitext(output)[1].lower()
     if ext == ".csv":
         return "csv"
-    if ext in (".xlsx", ".xlsm", ".xls"):
-        return "xlsx"
     return "xlsx"
 
 
@@ -555,6 +553,16 @@ def main(argv=None):
     out_format = choose_format(args.output, args.format)
     if args.output is None:
         args.output = "converted." + ("csv" if out_format == "csv" else "xlsx")
+
+    # xlsxwriter can only write the modern XLSX format. Writing it to a
+    # ".xls" file makes Excel show a "format and extension don't match"
+    # warning, so rename to ".xlsx" automatically.
+    if out_format == "xlsx" and args.output.lower().endswith(".xls"):
+        fixed = args.output[:-4] + ".xlsx"
+        print("[!] XLSX output saved as {}.xlsx (legacy .xls format is "
+              "not supported; renaming to avoid Excel warnings)".format(
+                  args.output[:-4]))
+        args.output = fixed
 
     reports = []
     for path in args.reports:
