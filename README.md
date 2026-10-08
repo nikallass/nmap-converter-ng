@@ -1,36 +1,36 @@
 # nmap-converter-ng
 
-Python-скрипт для конвертации отчётов nmap в XLSX или CSV.
+Python script for converting nmap scan reports into XLSX or CSV.
 
-Это переписанная и обновлённая версия старого `nmap-converter.py`: убрана
-мёртвая зависимость `python-libnmap`, добавлены входные форматы
-`.gnmap` и `.nmap` (текстовый вывод nmap) и CSV-режим вывода.
+This is a rewritten and modernized version of the old `nmap-converter.py`:
+the abandoned `python-libnmap` dependency is gone, `.gnmap` and `.nmap`
+(text output) input formats were added, along with a CSV output mode.
 
-# Форматы входных файлов
+# Supported input formats
 
-- `.xml` — XML-отчёт nmap (`-oX` / `-oA`)
-- `.gnmap` — grepable-отчёт (`-oG` / `-oA`)
-- `.nmap` — обычный текстовый отчёт (`-oN`, best-effort)
+- `.xml` — nmap XML report (`-oX` / `-oA`)
+- `.gnmap` — nmap grepable report (`-oG` / `-oA`)
+- `.nmap` — nmap plain text report (`-oN`, best effort)
 
-Формат определяется по расширению, а для остальных файлов — по содержимому.
-Можно передавать несколько файлов сразу (в одном обрабатываемом списке).
+The format is detected by file extension, falling back to content sniffing.
+Multiple files can be converted in a single run, mixing formats freely.
 
 # Requirements
 
 - Python 3.8+
-- `xlsxwriter` — только для XLSX-вывода:
+- `xlsxwriter` — only needed for XLSX output:
 
 ```bash
 pip install xlsxwriter
 ```
 
-или
+or
 
 ```bash
 pip install -r requirements.txt
 ```
 
-CSV-вывод работает вообще без зависимостей (только stdlib).
+CSV output works with no dependencies at all (stdlib only).
 
 # Usage
 
@@ -38,17 +38,17 @@ CSV-вывод работает вообще без зависимостей (т
 usage: nmap-converter.py [-h] [-o FILE] [-f {xlsx,csv,auto}] REPORT [REPORT ...]
 
 positional arguments:
-  REPORT                путь к отчёту nmap (xml, nmap или gnmap;
-                        формат определяется автоматически)
+  REPORT                path to nmap report (xml, nmap or gnmap;
+                        format is auto-detected)
 
 options:
   -h, --help            show this help message and exit
   -o FILE, --output FILE
-                        путь к выходному файлу (по умолчанию:
-                        converted.xlsx или converted.csv)
+                        path to output file (default:
+                        converted.xlsx or converted.csv)
   -f, --format {xlsx,csv,auto}
-                        формат вывода (по умолчанию auto — берётся из
-                        расширения выходного файла, иначе xlsx)
+                        output format (default: auto — derived from
+                        the output file extension, otherwise xlsx)
 ```
 
 # Examples
@@ -59,12 +59,16 @@ options:
 
 # gnmap -> CSV
 ./nmap-converter.py -o report.csv scan.gnmap
-./nmap-converter.py -f csv -o report scan.gnmap     # то же самое
+./nmap-converter.py -f csv -o report scan.gnmap     # same thing
 
-# Смешать несколько отчётов разных форматов
+# Mix several reports of different formats
 ./nmap-converter.py -o report.xlsx scan1.xml scan2.gnmap scan3.nmap
 ```
 
-XLSX содержит листы **Summary** (метаданные сканов), **Hosts** (хосты и ОС)
-и **Results** (порты/сервисы). CSV содержит те же колонки Results
-(с дополнительной колонкой Report) в одном файле.
+The XLSX workbook contains **Summary** (scan metadata), **Hosts** (hosts and
+OS) and **Results** (ports/services) sheets. The CSV output contains the same
+Results columns (plus a Report column) in a single file.
+
+# Русская версия
+
+См. [README.ru.md](README.ru.md).
